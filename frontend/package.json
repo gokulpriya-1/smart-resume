@@ -9,7 +9,8 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "electron:dev": "electron . --dev"
+    "electron:dev": "electron . --dev",
+    "package": "npm run build && electron-builder"
   },
   "dependencies": {
     "axios": "^1.18.1",
@@ -23,9 +24,31 @@
     "@vitejs/plugin-react": "^6.0.3",
     "autoprefixer": "^10.5.2",
     "electron": "^43.0.0",
+    "electron-builder": "^25.1.8",
     "oxlint": "^1.71.0",
     "postcss": "^8.5.16",
     "tailwindcss": "^3.4.19",
     "vite": "^8.1.1"
+  },
+  "build": {
+    "appId": "com.smartresume.analyzer",
+    "productName": "Smart Resume Analyzer",
+    "files": [
+      "dist/**/*",
+      "electron.cjs",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist-electron"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   }
 }
