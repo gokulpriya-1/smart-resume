@@ -7,17 +7,21 @@ import DownloadPage from './components/DownloadPage';
 import LiveOptimizer from './components/LiveOptimizer';
 import HistoryDashboard from './components/HistoryDashboard';
 import MockInterview from './components/MockInterview';
+import LandingPage from './components/LandingPage';
+import AdvancedLoader from './components/AdvancedLoader';
 import { AlertCircle, FileText } from 'lucide-react';
 
 export default function App() {
   const [loading, setLoading] = useState(false);
+  const [loadingRole, setLoadingRole] = useState('');
   const [error, setError] = useState(null);
   const [report, setReport] = useState(null);
   const [extractedText, setExtractedText] = useState('');
-  const [view, setView] = useState('analyzer');
+  const [view, setView] = useState('landing');
 
   const handleAnalyze = async (file, role) => {
     setLoading(true);
+    setLoadingRole(role);
     setError(null);
     setReport(null);
     setExtractedText('');
@@ -37,6 +41,7 @@ export default function App() {
 
       setReport(response.data);
       setExtractedText(response.data.extractedText || '');
+      setView('analyzer'); // Transition to analyzer dashboard view
     } catch (err) {
       console.error('Analysis error:', err);
       const message = err.response?.data?.error || err.message || 'Something went wrong. Please try again.';
@@ -57,7 +62,14 @@ export default function App() {
       <Header currentView={view} onNavigate={setView} />
       
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-        {view === 'download' ? (
+        {loading ? (
+          <AdvancedLoader targetRole={loadingRole} />
+        ) : view === 'landing' ? (
+          <LandingPage 
+            onStart={() => setView('analyzer')} 
+            onViewHistory={() => setView('history')} 
+          />
+        ) : view === 'download' ? (
           <DownloadPage onBack={() => setView('analyzer')} />
         ) : view === 'optimizer' ? (
           <LiveOptimizer 

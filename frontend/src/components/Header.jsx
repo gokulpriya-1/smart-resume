@@ -5,7 +5,7 @@ export default function Header({ currentView, onNavigate }) {
   return (
     <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-3 cursor-pointer select-none" onClick={() => onNavigate('analyzer')}>
+        <div className="flex items-center gap-3 cursor-pointer select-none" onClick={() => onNavigate('landing')}>
           <div className="p-2 bg-indigo-500/10 rounded-xl border border-indigo-500/20 text-indigo-400">
             <Cpu className="w-6 h-6 animate-pulse" />
           </div>
