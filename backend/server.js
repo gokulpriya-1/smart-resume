@@ -91,13 +91,15 @@ You are an expert AI Resume Analyzer and Senior Technical Recruiter.
 Analyze the following resume text against the target job role: "${targetRole}".
 
 Perform the following evaluation:
-1. ATS Score: Rate the candidate's alignment with the "${targetRole}" job role out of 100.
-2. Strengths: Identify 3 to 5 key strengths from the candidate's profile that make them a good fit for this role.
-3. Missing Skills: Highlight 3 to 5 critical skills or credentials needed for the target job role that are absent or weak in the resume.
-4. Interview Questions: Design exactly 5 customized technical or situational interview questions targeting specific areas of their resume relevant to the "${targetRole}" role.
+1. Qualification Match Check: Assess if the candidate's resume has any baseline relevance, background, or qualifications matching the "${targetRole}" role. Set "isQualified" to false if there is a severe mismatch (e.g., a candidate with a purely culinary or nursing background applying for a MERN stack software engineer role). If there is any reasonable baseline alignment or match, set "isQualified" to true.
+2. ATS Score: Rate the candidate's alignment with the "${targetRole}" job role out of 100. If isQualified is false, the score must be under 30.
+3. Strengths: Identify 3 to 5 key strengths from the candidate's profile that make them a good fit for this role. If isQualified is false, provide empty list or list describing the mismatch.
+4. Missing Skills: Highlight 3 to 5 critical skills or credentials needed for the target job role that are absent or weak in the resume.
+5. Interview Questions: Design exactly 5 customized technical or situational interview questions targeting specific areas of their resume relevant to the "${targetRole}" role. If isQualified is false, leave as empty array.
 
 You MUST respond with a strictly formatted JSON object matching the following structure:
 {
+  "isQualified": boolean,
   "atsScore": number,
   "strengths": ["string"],
   "missingSkills": ["string"],
@@ -119,7 +121,7 @@ ${extractedText}
       analysis = JSON.parse(responseText);
       
       // Validate structured AI response
-      if (typeof analysis.atsScore !== 'number' || !Array.isArray(analysis.strengths) || !Array.isArray(analysis.missingSkills) || !Array.isArray(analysis.interviewQuestions)) {
+      if (typeof analysis.isQualified !== 'boolean' || typeof analysis.atsScore !== 'number' || !Array.isArray(analysis.strengths) || !Array.isArray(analysis.missingSkills) || !Array.isArray(analysis.interviewQuestions)) {
         throw new Error('AI analysis returned an invalid schema.');
       }
     } catch (apiError) {
@@ -127,6 +129,7 @@ ${extractedText}
       
       // High-quality mock data based on the requested role
       analysis = {
+        isQualified: true,
         atsScore: 78,
         strengths: [
           `Demonstrated knowledge of core concepts relevant to ${targetRole || 'Software Engineering'}.`,
@@ -151,6 +154,7 @@ ${extractedText}
     // 3. Database Persistence
     const newReport = new Report({
       targetRole,
+      isQualified: analysis.isQualified,
       atsScore: analysis.atsScore,
       strengths: analysis.strengths,
       missingSkills: analysis.missingSkills,

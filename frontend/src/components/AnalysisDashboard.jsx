@@ -3,6 +3,54 @@ import { ArrowLeft, CheckCircle2, AlertTriangle, HelpCircle, Star, Sparkles } fr
 import ScoreDonut from './ScoreDonut';
 
 export default function AnalysisDashboard({ report, onReset }) {
+  if (report.isQualified === false) {
+    return (
+      <div className="max-w-xl mx-auto space-y-6 animate-fade-in">
+        {/* Back navigation button */}
+        <div className="flex items-center">
+          <button
+            onClick={onReset}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-sm font-medium transition"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Try Another Resume / Role</span>
+          </button>
+        </div>
+
+        {/* Qualification Not Matched Panel */}
+        <div className="bg-rose-500/10 border border-rose-500/20 p-8 rounded-3xl text-center space-y-6 relative overflow-hidden">
+          <div className="absolute -top-24 -left-24 w-48 h-48 bg-rose-500/10 rounded-full blur-3xl" />
+          
+          <div className="p-4 bg-rose-500/10 rounded-full border border-rose-500/20 text-rose-400 inline-block">
+            <AlertTriangle className="w-12 h-12" />
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold text-white">Qualification Not Matched</h2>
+            <p className="text-slate-400 text-sm max-w-md mx-auto leading-relaxed">
+              Your resume qualifications do not match the required skill set for the target role: <strong className="text-rose-400 font-semibold">{report.targetRole}</strong>.
+            </p>
+          </div>
+
+          <div className="p-5 bg-slate-950/60 border border-slate-850 rounded-2xl text-left text-sm text-slate-300 leading-relaxed max-w-md mx-auto space-y-3">
+            <p className="font-bold text-slate-200">Why was this rejected?</p>
+            <ul className="list-disc pl-5 space-y-1.5 text-xs text-slate-400">
+              <li>The experience details and core technical tags in the resume do not align with the requested role.</li>
+              <li>A minimum background overlap is required to perform structured ATS grading and custom technical interview generation.</li>
+            </ul>
+          </div>
+
+          <button
+            onClick={onReset}
+            className="px-6 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm rounded-xl transition shadow-lg shadow-rose-500/20"
+          >
+            Choose a Different Role
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
       {/* Back navigation button */}

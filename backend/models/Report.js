@@ -7,6 +7,10 @@ const reportSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    isQualified: {
+      type: Boolean,
+      default: true,
+    },
     atsScore: {
       type: Number,
       required: true,
