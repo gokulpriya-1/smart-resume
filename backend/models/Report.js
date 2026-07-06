@@ -29,6 +29,17 @@ const reportSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    roadmap: [
+      {
+        phase: String,
+        duration: String,
+        topics: [String],
+        project: {
+          title: String,
+          description: String
+        }
+      }
+    ],
   },
   {
     timestamps: true,

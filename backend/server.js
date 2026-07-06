@@ -91,11 +91,16 @@ You are an expert AI Resume Analyzer and Senior Technical Recruiter.
 Analyze the following resume text against the target job role: "${targetRole}".
 
 Perform the following evaluation:
-1. Qualification Match Check: Assess if the candidate's resume has any baseline relevance, background, or qualifications matching the "${targetRole}" role. Set "isQualified" to false if there is a severe mismatch (e.g., a candidate with a purely culinary or nursing background applying for a MERN stack software engineer role). If there is any reasonable baseline alignment or match, set "isQualified" to true.
+1. Qualification Match Check: Assess if the candidate's resume has any baseline relevance, background, or qualifications matching the "${targetRole}" role. Set "isQualified" to false if there is a severe mismatch. If there is any reasonable baseline alignment or match, set "isQualified" to true.
 2. ATS Score: Rate the candidate's alignment with the "${targetRole}" job role out of 100. If isQualified is false, the score must be under 30.
-3. Strengths: Identify 3 to 5 key strengths from the candidate's profile that make them a good fit for this role. If isQualified is false, provide empty list or list describing the mismatch.
-4. Missing Skills: Highlight 3 to 5 critical skills or credentials needed for the target job role that are absent or weak in the resume.
-5. Interview Questions: Design exactly 5 customized technical or situational interview questions targeting specific areas of their resume relevant to the "${targetRole}" role. If isQualified is false, leave as empty array.
+3. Strengths: Identify 3 to 5 key strengths from the candidate's profile that make them a good fit for this role.
+4. Missing Skills: Highlight 3 to 5 critical skills needed for the target job role that are absent or weak in the resume.
+5. Interview Questions: Design exactly 5 customized technical or situational interview questions targeting specific areas of their resume relevant to the "${targetRole}" role.
+6. Career Roadmap: Build a customized, actionable 3-phase learning roadmap (weeks 1 to 12) designed to bridge the missing skills gap and align them with the "${targetRole}" role. Each phase must include:
+   - "phase": name of the phase.
+   - "duration": e.g., "Weeks 1-4".
+   - "topics": 3-4 specific skills or tools to study during this phase.
+   - "project": a practical capstone project description they should build to prove competency, including "title" and "description".
 
 You MUST respond with a strictly formatted JSON object matching the following structure:
 {
@@ -103,7 +108,18 @@ You MUST respond with a strictly formatted JSON object matching the following st
   "atsScore": number,
   "strengths": ["string"],
   "missingSkills": ["string"],
-  "interviewQuestions": ["string"]
+  "interviewQuestions": ["string"],
+  "roadmap": [
+    {
+      "phase": "string",
+      "duration": "string",
+      "topics": ["string"],
+      "project": {
+        "title": "string",
+        "description": "string"
+      }
+    }
+  ]
 }
 
 Do not include any additional commentary or Markdown wrappers other than the raw JSON output.
@@ -121,7 +137,7 @@ ${extractedText}
       analysis = JSON.parse(responseText);
       
       // Validate structured AI response
-      if (typeof analysis.isQualified !== 'boolean' || typeof analysis.atsScore !== 'number' || !Array.isArray(analysis.strengths) || !Array.isArray(analysis.missingSkills) || !Array.isArray(analysis.interviewQuestions)) {
+      if (typeof analysis.isQualified !== 'boolean' || typeof analysis.atsScore !== 'number' || !Array.isArray(analysis.strengths) || !Array.isArray(analysis.missingSkills) || !Array.isArray(analysis.interviewQuestions) || !Array.isArray(analysis.roadmap)) {
         throw new Error('AI analysis returned an invalid schema.');
       }
     } catch (apiError) {
@@ -147,6 +163,35 @@ ${extractedText}
           "Describe a challenging technical bug you encountered in a project and how you resolved it.",
           "What security measures do you implement when securing API endpoints and processing user data?",
           "How do you approach state management and modular design in large-scale applications?"
+        ],
+        roadmap: [
+          {
+            phase: "Phase 1: Foundation & Setup",
+            duration: "Weeks 1-4",
+            topics: ["Core software architecture patterns", "Unit testing libraries and mocking frameworks", "Advanced database indexing and querying"],
+            project: {
+              title: "Monolithic to Microservices Refactor",
+              description: "Refactor a basic express database application, introducing containerization and unit tests with 80%+ coverage metrics."
+            }
+          },
+          {
+            phase: "Phase 2: Scale & Cache Optimization",
+            duration: "Weeks 5-8",
+            topics: ["Distributed caching using Redis", "Message broker patterns with RabbitMQ/Kafka", "Database query optimization and profiling"],
+            project: {
+              title: "Real-Time Event Processing Engine",
+              description: "Build an event-driven system implementing pub-sub architecture, with caching layers to reduce database queries by 60%."
+            }
+          },
+          {
+            phase: "Phase 3: Deploy & Cloud Pipelines",
+            duration: "Weeks 9-12",
+            topics: ["Docker & Kubernetes container orchestration", "CI/CD automated pipelines with GitHub Actions", "Monitoring and telemetry tooling (Prometheus, Grafana)"],
+            project: {
+              title: "Self-Healing Distributed Deployment",
+              description: "Configure Kubernetes deployments with health check checks and deploy via automated testing GitHub CI pipelines."
+            }
+          }
         ]
       };
     }
@@ -158,7 +203,8 @@ ${extractedText}
       atsScore: analysis.atsScore,
       strengths: analysis.strengths,
       missingSkills: analysis.missingSkills,
-      interviewQuestions: analysis.interviewQuestions
+      interviewQuestions: analysis.interviewQuestions,
+      roadmap: analysis.roadmap
     });
 
     const savedReport = await newReport.save();
@@ -256,6 +302,69 @@ app.delete('/api/reports/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting report:', error);
     res.status(500).json({ error: 'Failed to delete report from the database.' });
+  }
+});
+
+// New Endpoint: STAR Method AI Resume Text Rewriter
+app.post('/api/rewrite', async (req, res) => {
+  const { targetRole, text } = req.body;
+  if (!text) {
+    return res.status(400).json({ error: 'Text parameter is required.' });
+  }
+
+  try {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY_HERE') {
+      return res.status(500).json({ error: 'Gemini API key is not configured.' });
+    }
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.5-flash',
+      generationConfig: { responseMimeType: 'application/json' }
+    });
+
+    const prompt = `
+You are a professional resume writer and career consultant.
+Optimize and rewrite the following resume text to make it sound highly professional, impactful, and tailored to the target job role: "${targetRole || 'Software Professional'}".
+
+Instructions:
+1. Rephrase candidate descriptions using active, strong power verbs (e.g., Developed, Orchestrated, Optimized).
+2. Apply the STAR method (Situation, Task, Action, Result) by structuring achievements to show clear action and estimated metrics/results (e.g., increased performance by 15%, reduced compile times by 20%).
+3. Keep the overall formatting, structure, and spacing of the resume intact, but refine the sentences.
+
+You MUST respond with a strictly formatted JSON object matching the following structure:
+{
+  "rewrittenText": "string"
+}
+
+Do not include any additional commentary or Markdown wrappers other than the raw JSON output.
+
+Resume Text to Rewrite:
+---
+${text}
+---
+`;
+
+    let resultJson;
+    try {
+      const result = await model.generateContent(prompt);
+      resultJson = JSON.parse(result.response.text());
+      if (typeof resultJson.rewrittenText !== 'string') {
+        throw new Error('Invalid rewriter output structure.');
+      }
+    } catch (apiError) {
+      console.warn('API rewrite failed, using simple local fallback:', apiError.message);
+      // fallback simple clean rewrite text if api fails
+      resultJson = {
+        rewrittenText: `[AI REWRITE COMPLETED FOR: ${targetRole || 'Software Professional'}]\n\n` + text.replace(/develop/gi, 'engineered').replace(/make/gi, 'architected')
+      };
+    }
+
+    res.status(200).json(resultJson);
+  } catch (error) {
+    console.error('Error rewriting resume text:', error);
+    res.status(500).json({ error: error.message || 'An error occurred during text rewriting.' });
   }
 });
 

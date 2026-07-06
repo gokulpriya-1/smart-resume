@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { ArrowLeft, Copy, Check, Download, CheckCircle, AlertCircle, Award, Sparkles, FileText } from 'lucide-react';
 
 export default function LiveOptimizer({ report, extractedText, onBack }) {
   const [resumeText, setResumeText] = useState(extractedText || '');
   const [copied, setCopied] = useState(false);
+  const [rewriting, setRewriting] = useState(false);
 
   // Parse word and character counts dynamically
   const charCount = resumeText.length;
@@ -23,6 +25,28 @@ export default function LiveOptimizer({ report, extractedText, onBack }) {
   // Increase rating by 5 points for every missing skill successfully integrated, capped at 100.
   const baseScore = report.atsScore || 0;
   const estimatedScore = Math.min(100, baseScore + (foundCount * 5));
+
+  // Handle AI professional rewrite (STAR method)
+  const handleRewrite = async () => {
+    if (resumeText.trim() === '') {
+      alert('Please provide some resume text before polishing.');
+      return;
+    }
+    setRewriting(true);
+    try {
+      const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await axios.post(`${backendUrl}/api/rewrite`, {
+        targetRole: report.targetRole,
+        text: resumeText
+      });
+      setResumeText(response.data.rewrittenText || '');
+    } catch (err) {
+      console.error('Error rewriting resume text:', err);
+      alert('Failed to rewrite resume text. Please try again.');
+    } finally {
+      setRewriting(false);
+    }
+  };
 
   // Handle Copy to Clipboard
   const handleCopy = () => {
@@ -64,6 +88,23 @@ export default function LiveOptimizer({ report, extractedText, onBack }) {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={handleRewrite}
+            disabled={rewriting || resumeText.trim() === ''}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-650 to-indigo-650 hover:from-purple-550 hover:to-indigo-550 disabled:opacity-50 text-white text-sm font-semibold transition shadow-md"
+          >
+            {rewriting ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Polishing...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 text-purple-300" />
+                <span>AI Polish (STAR)</span>
+              </>
+            )}
+          </button>
           <button
             onClick={handleCopy}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-sm font-semibold transition"

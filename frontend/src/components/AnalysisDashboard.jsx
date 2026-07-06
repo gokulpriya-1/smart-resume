@@ -152,6 +152,64 @@ export default function AnalysisDashboard({ report, onReset, onOpenOptimizer, on
         </div>
       </div>
 
+      {/* Interactive AI Career Roadmap & Upgradation Blueprint */}
+      {report.roadmap && report.roadmap.length > 0 && (
+        <div className="bg-slate-900/40 backdrop-blur-md border border-slate-800 p-8 rounded-3xl space-y-8 relative overflow-hidden">
+          <div className="absolute -top-32 -left-32 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl" />
+          
+          <div className="space-y-2">
+            <h3 className="text-white text-lg font-bold flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-indigo-400 animate-pulse" />
+              Interactive Career Roadmap & Upgradation Blueprint
+            </h3>
+            <p className="text-slate-400 text-sm max-w-3xl">
+              Follow this step-by-step timeline designed by AI to bridge your missing skills gap and land the targeted position.
+            </p>
+          </div>
+
+          {/* Vertical Roadmap Timeline */}
+          <div className="relative pl-8 md:pl-12 border-l border-slate-800 space-y-12 ml-4">
+            {report.roadmap.map((phase, index) => (
+              <div key={index} className="relative group">
+                {/* Glowing Node Marker */}
+                <div className="absolute -left-[45px] md:-left-[61px] top-0 w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-950 border border-slate-850 flex items-center justify-center font-bold text-xs md:text-sm text-indigo-400 shadow-md group-hover:border-indigo-500 transition duration-300">
+                  {index + 1}
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                  {/* Left Column: Phase & Topics */}
+                  <div className="lg:col-span-1 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 text-[10px] font-bold uppercase tracking-wider border border-indigo-500/20">
+                        {phase.duration}
+                      </span>
+                    </div>
+                    <h4 className="text-lg font-bold text-white group-hover:text-indigo-300 transition duration-200">
+                      {phase.phase}
+                    </h4>
+                    <ul className="space-y-1.5 text-xs text-slate-400">
+                      {phase.topics.map((topic, tid) => (
+                        <li key={tid} className="flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-indigo-500/40" />
+                          <span>{topic}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Right Column: Project Card */}
+                  <div className="lg:col-span-2 p-5 bg-slate-950/60 border border-slate-850 rounded-2xl space-y-2 group-hover:border-slate-700 transition duration-300">
+                    <span className="text-[10px] text-purple-400 font-bold uppercase tracking-wider">Target Project Blueprint</span>
+                    <h5 className="text-sm font-bold text-slate-200">{phase.project.title}</h5>
+                    <p className="text-xs text-slate-450 leading-relaxed">{phase.project.description}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Customized Interview Questions */}
       <div className="bg-slate-900/40 backdrop-blur-md border border-slate-800 p-8 rounded-3xl space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
