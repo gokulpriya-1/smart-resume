@@ -5,7 +5,9 @@ import FileUpload from './components/FileUpload';
 import AnalysisDashboard from './components/AnalysisDashboard';
 import DownloadPage from './components/DownloadPage';
 import LiveOptimizer from './components/LiveOptimizer';
-import { AlertCircle } from 'lucide-react';
+import HistoryDashboard from './components/HistoryDashboard';
+import MockInterview from './components/MockInterview';
+import { AlertCircle, FileText } from 'lucide-react';
 
 export default function App() {
   const [loading, setLoading] = useState(false);
@@ -63,11 +65,25 @@ export default function App() {
             extractedText={extractedText} 
             onBack={() => setView('analyzer')} 
           />
+        ) : view === 'history' ? (
+          <HistoryDashboard 
+            onBack={() => setView('analyzer')} 
+            onLoadReport={(rep) => {
+              setReport(rep);
+              setExtractedText(rep.extractedText || '');
+              setView('analyzer');
+            }} 
+          />
+        ) : view === 'interview' ? (
+          <MockInterview 
+            report={report} 
+            onBack={() => setView('analyzer')} 
+          />
         ) : (
           <>
             {/* Global Error Banner */}
             {error && (
-              <div className="max-w-xl mx-auto mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-400 text-sm flex items-start gap-3">
+              <div className="max-w-xl mx-auto mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-450 text-sm flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <p className="font-bold">Analysis Failed</p>
@@ -82,9 +98,21 @@ export default function App() {
                 report={report} 
                 onReset={handleReset} 
                 onOpenOptimizer={() => setView('optimizer')} 
+                onOpenInterview={() => setView('interview')} 
               />
             ) : (
-              <FileUpload onAnalyze={handleAnalyze} loading={loading} />
+              <div className="space-y-8">
+                <FileUpload onAnalyze={handleAnalyze} loading={loading} />
+                <div className="text-center no-print">
+                  <button
+                    onClick={() => setView('history')}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-xs font-semibold tracking-wider uppercase transition shadow-lg"
+                  >
+                    <FileText className="w-4 h-4 text-indigo-400" />
+                    <span>View Saved Reports History</span>
+                  </button>
+                </div>
+              </div>
             )}
           </>
         )}

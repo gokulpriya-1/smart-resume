@@ -1,8 +1,8 @@
 import React from 'react';
-import { ArrowLeft, CheckCircle2, AlertTriangle, HelpCircle, Star, Sparkles } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, AlertTriangle, HelpCircle, Star, Sparkles, FileText } from 'lucide-react';
 import ScoreDonut from './ScoreDonut';
 
-export default function AnalysisDashboard({ report, onReset, onOpenOptimizer }) {
+export default function AnalysisDashboard({ report, onReset, onOpenOptimizer, onOpenInterview }) {
   if (report.isQualified === false) {
     return (
       <div className="max-w-xl mx-auto space-y-6 animate-fade-in">
@@ -54,14 +54,25 @@ export default function AnalysisDashboard({ report, onReset, onOpenOptimizer }) 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
       {/* Back navigation button */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={onReset}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-sm font-medium transition"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Upload Another Resume</span>
-        </button>
+      <div className="flex items-center justify-between no-print">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onReset}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white text-sm font-medium transition"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Upload Another Resume</span>
+          </button>
+          {report.isQualified !== false && (
+            <button
+              onClick={() => window.print()}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-indigo-400 hover:text-indigo-300 text-sm font-medium transition"
+            >
+              <FileText className="w-4 h-4 text-indigo-400" />
+              <span>Export PDF Report</span>
+            </button>
+          )}
+        </div>
 
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
           <Sparkles className="w-3.5 h-3.5" />
@@ -82,7 +93,7 @@ export default function AnalysisDashboard({ report, onReset, onOpenOptimizer }) 
           </div>
           <button
             onClick={onOpenOptimizer}
-            className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-450 hover:to-purple-550 text-white font-bold text-sm transition shadow-lg shadow-indigo-500/20 group relative overflow-hidden shrink-0"
+            className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-450 hover:to-purple-550 text-white font-bold text-sm transition shadow-lg shadow-indigo-500/20 group relative overflow-hidden shrink-0 no-print"
           >
             <Sparkles className="w-4 h-4 group-hover:scale-110 transition duration-200" />
             <span>Optimize Resume Live</span>
@@ -143,13 +154,26 @@ export default function AnalysisDashboard({ report, onReset, onOpenOptimizer }) 
 
       {/* Customized Interview Questions */}
       <div className="bg-slate-900/40 backdrop-blur-md border border-slate-800 p-8 rounded-3xl space-y-6">
-        <h3 className="text-white text-lg font-bold flex items-center gap-2">
-          <HelpCircle className="w-5 h-5 text-indigo-400 animate-pulse" />
-          Customized Technical Interview Questions
-        </h3>
-        <p className="text-slate-400 text-sm max-w-3xl">
-          Here are 5 tailored interview questions based on your resume experience and target role, designed to prepare you for technical rounds.
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h3 className="text-white text-lg font-bold flex items-center gap-2">
+              <HelpCircle className="w-5 h-5 text-indigo-400 animate-pulse" />
+              Customized Technical Interview Questions
+            </h3>
+            <p className="text-slate-400 text-sm max-w-xl">
+              Here are 5 tailored interview questions based on your resume experience and target role, designed to prepare you for technical rounds.
+            </p>
+          </div>
+          {report.isQualified !== false && (
+            <button
+              onClick={onOpenInterview}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-650 hover:bg-indigo-550 text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-indigo-600/20 shrink-0 no-print"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Start Practice Session</span>
+            </button>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 gap-4">
           {report.interviewQuestions && report.interviewQuestions.length > 0 ? (

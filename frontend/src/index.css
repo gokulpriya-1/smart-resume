@@ -37,3 +37,39 @@ body {
 .animate-draw {
   animation: draw 1s ease-out forwards;
 }
+
+/* Print styles to format PDF export reports */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 11pt !important;
+  }
+  
+  header,
+  button,
+  .no-print,
+  a {
+    display: none !important;
+  }
+  
+  .bg-slate-900\/40,
+  .bg-slate-950\/40,
+  .bg-slate-950\/60,
+  .bg-slate-900\/20,
+  .bg-slate-900 {
+    background-color: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  h1, h2, h3, h4, span, p, li, td, th {
+    color: #0f172a !important;
+  }
+
+  .text-white {
+    color: #0f172a !important;
+  }
+}
