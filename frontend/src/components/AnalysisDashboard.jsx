@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowLeft, CheckCircle2, AlertTriangle, HelpCircle, Star, Sparkles } from 'lucide-react';
 import ScoreDonut from './ScoreDonut';
 
-export default function AnalysisDashboard({ report, onReset }) {
+export default function AnalysisDashboard({ report, onReset, onOpenOptimizer }) {
   if (report.isQualified === false) {
     return (
       <div className="max-w-xl mx-auto space-y-6 animate-fade-in">
@@ -80,6 +80,13 @@ export default function AnalysisDashboard({ report, onReset }) {
               This report evaluates your resume's alignment with target requirements, highlighting strengths, missing keywords, and customizing mock interview questions.
             </p>
           </div>
+          <button
+            onClick={onOpenOptimizer}
+            className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-450 hover:to-purple-550 text-white font-bold text-sm transition shadow-lg shadow-indigo-500/20 group relative overflow-hidden shrink-0"
+          >
+            <Sparkles className="w-4 h-4 group-hover:scale-110 transition duration-200" />
+            <span>Optimize Resume Live</span>
+          </button>
         </div>
       </div>
 

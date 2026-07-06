@@ -163,7 +163,10 @@ ${extractedText}
 
     const savedReport = await newReport.save();
 
-    res.status(200).json(savedReport);
+    res.status(200).json({
+      ...savedReport.toObject(),
+      extractedText
+    });
   } catch (error) {
     console.error('Error in analyze route:', error);
     res.status(500).json({ error: error.message || 'An error occurred during resume analysis' });

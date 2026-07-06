@@ -4,18 +4,21 @@ import Header from './components/Header';
 import FileUpload from './components/FileUpload';
 import AnalysisDashboard from './components/AnalysisDashboard';
 import DownloadPage from './components/DownloadPage';
+import LiveOptimizer from './components/LiveOptimizer';
 import { AlertCircle } from 'lucide-react';
 
 export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [report, setReport] = useState(null);
+  const [extractedText, setExtractedText] = useState('');
   const [view, setView] = useState('analyzer');
 
   const handleAnalyze = async (file, role) => {
     setLoading(true);
     setError(null);
     setReport(null);
+    setExtractedText('');
 
     const formData = new FormData();
     formData.append('resume', file);
@@ -31,6 +34,7 @@ export default function App() {
       });
 
       setReport(response.data);
+      setExtractedText(response.data.extractedText || '');
     } catch (err) {
       console.error('Analysis error:', err);
       const message = err.response?.data?.error || err.message || 'Something went wrong. Please try again.';
@@ -42,6 +46,7 @@ export default function App() {
 
   const handleReset = () => {
     setReport(null);
+    setExtractedText('');
     setError(null);
   };
 
@@ -52,6 +57,12 @@ export default function App() {
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         {view === 'download' ? (
           <DownloadPage onBack={() => setView('analyzer')} />
+        ) : view === 'optimizer' ? (
+          <LiveOptimizer 
+            report={report} 
+            extractedText={extractedText} 
+            onBack={() => setView('analyzer')} 
+          />
         ) : (
           <>
             {/* Global Error Banner */}
@@ -67,7 +78,11 @@ export default function App() {
 
             {/* Dashboard toggle */}
             {report ? (
-              <AnalysisDashboard report={report} onReset={handleReset} />
+              <AnalysisDashboard 
+                report={report} 
+                onReset={handleReset} 
+                onOpenOptimizer={() => setView('optimizer')} 
+              />
             ) : (
               <FileUpload onAnalyze={handleAnalyze} loading={loading} />
             )}
