@@ -3,12 +3,14 @@ import axios from 'axios';
 import Header from './components/Header';
 import FileUpload from './components/FileUpload';
 import AnalysisDashboard from './components/AnalysisDashboard';
+import DownloadPage from './components/DownloadPage';
 import { AlertCircle } from 'lucide-react';
 
 export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [report, setReport] = useState(null);
+  const [view, setView] = useState('analyzer');
 
   const handleAnalyze = async (file, role) => {
     setLoading(true);
@@ -44,26 +46,32 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col font-sans antialiased text-slate-100 pb-16">
-      <Header />
+    <div className="min-h-screen bg-slate-955 flex flex-col font-sans antialiased text-slate-100 pb-16">
+      <Header currentView={view} onNavigate={setView} />
       
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-        {/* Global Error Banner */}
-        {error && (
-          <div className="max-w-xl mx-auto mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-400 text-sm flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <p className="font-bold">Analysis Failed</p>
-              <p className="leading-relaxed">{error}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Dashboard toggle */}
-        {report ? (
-          <AnalysisDashboard report={report} onReset={handleReset} />
+        {view === 'download' ? (
+          <DownloadPage onBack={() => setView('analyzer')} />
         ) : (
-          <FileUpload onAnalyze={handleAnalyze} loading={loading} />
+          <>
+            {/* Global Error Banner */}
+            {error && (
+              <div className="max-w-xl mx-auto mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-400 text-sm flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <p className="font-bold">Analysis Failed</p>
+                  <p className="leading-relaxed">{error}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Dashboard toggle */}
+            {report ? (
+              <AnalysisDashboard report={report} onReset={handleReset} />
+            ) : (
+              <FileUpload onAnalyze={handleAnalyze} loading={loading} />
+            )}
+          </>
         )}
       </main>
     </div>

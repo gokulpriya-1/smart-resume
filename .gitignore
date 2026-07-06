@@ -9,6 +9,8 @@ node_modules/
 # Production Builds
 dist/
 **/dist/
+dist-electron/
+**/dist-electron/
 
 # Development/Testing Files
 scratch/
