@@ -100,7 +100,7 @@ export default function LiveOptimizer({ report, extractedText, onBack }) {
             <textarea
               value={resumeText}
               onChange={(e) => setResumeText(e.target.value)}
-              className="w-full flex-grow bg-slate-955/60 border border-slate-850 focus:border-indigo-500 rounded-2xl p-6 text-sm text-slate-350 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none font-mono leading-relaxed"
+              className="w-full flex-grow bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-2xl p-6 text-sm text-slate-300 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none font-mono leading-relaxed"
               placeholder="Paste or edit your resume text here..."
               autoFocus
             />
