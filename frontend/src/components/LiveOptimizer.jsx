@@ -100,10 +100,17 @@ export default function LiveOptimizer({ report, extractedText, onBack }) {
             <textarea
               value={resumeText}
               onChange={(e) => setResumeText(e.target.value)}
-              className="w-full flex-grow bg-slate-950/60 border border-slate-850 focus:border-indigo-500 rounded-2xl p-6 text-sm text-slate-350 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none font-mono leading-relaxed"
+              className="w-full flex-grow bg-slate-955/60 border border-slate-850 focus:border-indigo-500 rounded-2xl p-6 text-sm text-slate-350 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none font-mono leading-relaxed"
               placeholder="Paste or edit your resume text here..."
               autoFocus
             />
+
+            {!extractedText && (
+              <div className="p-3 bg-amber-500/5 border border-amber-500/10 text-amber-450 rounded-xl text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-amber-400" />
+                <span>Notice: Historical database reports do not store raw text. You can paste your resume text here manually to track keywords!</span>
+              </div>
+            )}
           </div>
         </div>
 
