@@ -7,11 +7,11 @@ export default function DownloadPage({ onBack }) {
       name: 'Windows',
       icon: Monitor,
       type: 'NSIS Installer (.exe)',
-      version: 'v1.1.0',
+      version: '1.1.0',
       size: '101 MB',
       color: 'from-blue-500/20 to-indigo-500/20 text-blue-400 border-blue-500/30',
       btnColor: 'bg-blue-600 hover:bg-blue-500 shadow-blue-500/20',
-      link: 'https://github.com/gokulpriya-1/smart-resume/releases/download/v1.1/Smart.Resume.Analyzer.Setup.0.0.0.exe',
+      link: 'https://github.com/gokulpriya-1/smart-resume/releases/download/1.1/Smart.Resume.Analyzer.Setup.0.0.0.exe',
       supported: 'Windows 10, 11 (64-bit)'
     },
     {
