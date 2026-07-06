@@ -24,6 +24,44 @@ function createWindow() {
     win.loadURL('https://smart-resume-self.vercel.app');
   }
 
+  // Handle keyboard navigation shortcuts (Reload, Back, Forward)
+  win.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown') {
+      // Reload page: Ctrl+R or F5
+      if ((input.control && input.key.toLowerCase() === 'r') || input.key === 'F5') {
+        win.webContents.reload();
+        event.preventDefault();
+      }
+      // Back page: Alt+Left
+      if (input.alt && input.key === 'Left') {
+        if (win.webContents.canGoBack()) {
+          win.webContents.goBack();
+        }
+        event.preventDefault();
+      }
+      // Forward page: Alt+Right
+      if (input.alt && input.key === 'Right') {
+        if (win.webContents.canGoForward()) {
+          win.webContents.goForward();
+        }
+        event.preventDefault();
+      }
+    }
+  });
+
+  // Handle trackpad swipes and mouse side back/forward buttons (Browser navigation gestures)
+  win.on('app-command', (e, cmd) => {
+    if (cmd === 'browser-backward') {
+      if (win.webContents.canGoBack()) {
+        win.webContents.goBack();
+      }
+    } else if (cmd === 'browser-forward') {
+      if (win.webContents.canGoForward()) {
+        win.webContents.goForward();
+      }
+    }
+  });
+
   // Remove default menu bar
   win.setMenu(null);
 }
