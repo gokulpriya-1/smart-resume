@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment Variables
+.env
+**/.env
+
+# Production Builds
+dist/
+**/dist/
+
+# Development/Testing Files
+scratch/
+**/scratch/
+.system_generated/
+**/.system_generated/
+
+# OS specific files
+.DS_Store
+Thumbs.db
