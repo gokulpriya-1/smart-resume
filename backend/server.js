@@ -134,7 +134,9 @@ ${extractedText}
     try {
       const result = await model.generateContent(prompt);
       const responseText = result.response.text();
-      analysis = JSON.parse(responseText);
+      // Clean potential markdown backticks around JSON
+      const cleanedText = responseText.replace(/```json/gi, '').replace(/```/gi, '').trim();
+      analysis = JSON.parse(cleanedText);
       
       // Validate structured AI response
       if (typeof analysis.isQualified !== 'boolean' || typeof analysis.atsScore !== 'number' || !Array.isArray(analysis.strengths) || !Array.isArray(analysis.missingSkills) || !Array.isArray(analysis.interviewQuestions) || !Array.isArray(analysis.roadmap)) {
@@ -365,6 +367,26 @@ ${text}
   } catch (error) {
     console.error('Error rewriting resume text:', error);
     res.status(500).json({ error: error.message || 'An error occurred during text rewriting.' });
+  }
+});
+
+// Diagnostic debug endpoint to test Gemini API connectivity directly
+app.get('/api/debug-gemini', async (req, res) => {
+  try {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(200).json({ status: 'error', message: 'API key is missing from backend environment variables' });
+    }
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const result = await model.generateContent("Respond with 'Success' only.");
+    res.status(200).json({ 
+      status: 'success', 
+      model: 'gemini-2.5-flash', 
+      response: result.response.text().trim() 
+    });
+  } catch (err) {
+    res.status(200).json({ status: 'error', message: err.message });
   }
 });
 
